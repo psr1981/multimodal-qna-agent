@@ -1,6 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from typing import Optional
+from prompts import MultimodalPromptTemplates
 
 class MultimodalAgent:
     def __init__(self, api_key: str):
@@ -10,12 +11,12 @@ class MultimodalAgent:
         Args:
             api_key (str): OpenAI API key
         """
-        # Simplified configuration without extra parameters
         self.model = ChatOpenAI(
             model="gpt-4o",
             api_key=api_key,
             max_tokens=1000
         )
+        self.prompt_templates = MultimodalPromptTemplates()
 
     def process_query(self, question: str, image: Optional[str] = None) -> str:
         """
@@ -28,31 +29,16 @@ class MultimodalAgent:
         Returns:
             str: Response from the model
         """
+        # Get the chat prompt template
+        chat_prompt = self.prompt_templates.get_chat_prompt()
+        
+        # Format the messages
         messages = [
-            SystemMessage(content=(
-                "You are a helpful assistant that can analyze images and answer questions about them. "
-                "Provide clear, concise, and accurate responses."
-            ))
+            SystemMessage(content=chat_prompt.messages[0].prompt.template),
+            HumanMessage(
+                content=self.prompt_templates.format_human_message(question, image)
+            )
         ]
-
-        if image:
-            # If image is provided, create a message with image content
-            message_content = [
-                {
-                    "type": "text",
-                    "text": question
-                },
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": image
-                    }
-                }
-            ]
-            messages.append(HumanMessage(content=message_content))
-        else:
-            # If no image, just process the text question
-            messages.append(HumanMessage(content=question))
 
         # Get response from the model
         response = self.model.invoke(messages)
