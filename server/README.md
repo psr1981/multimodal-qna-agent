@@ -1,6 +1,6 @@
-# Multimodal QnA Agent
+# Multimodal QnA Agent (Server)
 
-A FastAPI-based multimodal question-answering system using GPT-4-Vision.
+A FastAPI-based multimodal question-answering system using OpenAI.
 
 ## Setup
 

@@ -16,8 +16,8 @@ if not OPENAI_API_KEY:
     raise ValueError("OPENAI_API_KEY not found in environment variables")
 
 app = FastAPI(
-    title="Multimodal QnA Agent",
-    description="A FastAPI service that processes questions with optional images using GPT-4o",
+    title="Multimodal QnA Agent (Server)",
+    description="A FastAPI service that processes questions with optional images using OpenAI",
     version="1.0.0"
 )
 
