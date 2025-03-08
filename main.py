@@ -1,13 +1,11 @@
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-import base64
-from io import BytesIO
-from PIL import Image
 import os
 from dotenv import load_dotenv
 from graph import MultimodalQAGraph
 from typing import Optional
+from image_utils import process_image, validate_image_format
 
 # Load environment variables from .env file
 load_dotenv()
@@ -19,7 +17,7 @@ if not OPENAI_API_KEY:
 
 app = FastAPI(
     title="Multimodal QnA Agent",
-    description="A FastAPI service that processes questions with optional images using GPT-4-Vision",
+    description="A FastAPI service that processes questions with optional images using GPT-4o",
     version="1.0.0"
 )
 
@@ -42,22 +40,33 @@ async def ask_question(
 ):
     """
     Process a question with an optional image.
+    Supports PNG and JPG/JPEG image formats.
     
     Args:
         question (str): The question to be answered
-        image (UploadFile, optional): An image file to analyze
+        image (UploadFile, optional): An image file to analyze (PNG or JPG/JPEG)
     """
     try:
-        # Convert image to base64 if provided
-        image_data = None
+        # Validate image format if provided
         if image:
-            contents = await image.read()
-            img = Image.open(BytesIO(contents))
-            buffered = BytesIO()
-            img.save(buffered, format="JPEG")
-            image_data = base64.b64encode(buffered.getvalue()).decode()
+            if not validate_image_format(image.filename):
+                raise HTTPException(
+                    status_code=400,
+                    detail="Only PNG and JPG/JPEG images are supported"
+                )
+            
+            # Process image
+            image_data = process_image(image)
+            
+            # Debug prints
+            #print(f"Image filename: {image.filename}")
+            #print(f"Image content type: {image.content_type}")
+           # print(f"Base64 string starts with: {image_data[:50]}...")
 
-        # Run the chain
+        else:
+            image_data = None
+
+         # Run the chain
         result = chain.invoke({
             "question": question,
             "image": image_data,
@@ -69,6 +78,8 @@ async def ask_question(
             "answer": result["answer"]
         })
 
+    except HTTPException as he:
+        raise he
     except Exception as e:
         return JSONResponse({
             "status": "error",
