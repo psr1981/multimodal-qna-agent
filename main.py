@@ -59,9 +59,9 @@ async def ask_question(
             image_data = process_image(image)
             
             # Debug prints
-            #print(f"Image filename: {image.filename}")
-            #print(f"Image content type: {image.content_type}")
-           # print(f"Base64 string starts with: {image_data[:50]}...")
+            print(f"Question : {question}")
+            print(f"Image file name: {image.filename}")
+            print(f"Base64 string starts with: {image_data[:50]}...")
 
         else:
             image_data = None
