@@ -8,7 +8,7 @@ class GraphState(TypedDict):
     question: str
     image: str | None
     answer: str | None
-    diagram_description: str | None
+    diagram: str | None
 
 class MultimodalQAGraph:
     def __init__(self, openai_api_key: str, aws_access_key: str, aws_secret_key: str, 
@@ -59,7 +59,7 @@ class MultimodalQAGraph:
 
             # Update state with results
             state["answer"] = answer
-            state["diagram_description"] = diagram
+            state["diagram"] = diagram
             
             return state
             
@@ -69,8 +69,8 @@ class MultimodalQAGraph:
             # Still try to provide something useful if one agent fails
             if not state.get("answer"):
                 state["answer"] = "Error processing question"
-            if not state.get("diagram_description"):
-                state["diagram_description"] = "Error generating diagram"
+            if not state.get("diagram"):
+                state["diagram"] = "Error generating diagram"
             return state
 
     def build(self) -> Any:

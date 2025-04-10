@@ -82,13 +82,13 @@ async def ask_question(
             "question": question,
             "image": image_data,
             "answer": None,
-            "diagram_description": None
+            "diagram": None
         })
 
         return JSONResponse({
             "status": "success",
             "answer": result["answer"],
-            "diagram_description": result["diagram_description"]
+            "diagram": result["diagram"]
         })
 
     except HTTPException as he:

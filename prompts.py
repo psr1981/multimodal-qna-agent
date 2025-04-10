@@ -22,30 +22,25 @@ MULTIMODAL_HUMAN_TEMPLATE = """Question: {question}
 {image_content}"""
 
 # New DiagramAgent prompts
-DIAGRAM_SYSTEM_TEMPLATE = """You are an expert at creating detailed diagram descriptions. Your role is to:
+DIAGRAM_SYSTEM_TEMPLATE = """You are an expert at creating detailed diagram for visualizing the problem. Your role is to:
 1. Analyze the given context (text or image)
-2. Create a clear, structured description of a diagram that represents the problem or scenario
-3. Include specific details about:
-   - Components and their relationships
-   - Layout and organization
-   - Flow of information or processes
-   - Key elements and their connections
-4. Use precise, technical language
-5. Make the description suitable for visualization
+2. If you believe that diagram can be generated to explain this problem better then 
+    Generate a diagram in form of svg format.
+    If you are not able to generate a diagram then just say "No additional diagram needed"
+3. Your response not contain any text other than svg code.
+    
+"""
 
-Focus on creating a description that can be easily translated into a visual diagram."""
-
-DIAGRAM_HUMAN_TEMPLATE = """Please create a detailed diagram description for the following context:
+DIAGRAM_HUMAN_TEMPLATE = """Please create a detailed diagram to visualize the problem for the following context:
 
 Context: {context}
 {image_content}
 
-Provide a structured description that includes:
-1. Main components
+Provide a structured diagram that includes:
+1. Main components, geometrical shapes
 2. Relationships and connections
-3. Layout organization
-4. Flow direction
-5. Key elements and their attributes"""
+3. Flow direction
+4. Key elements and their attributes"""
 
 class MultimodalPromptTemplates:
     @staticmethod
