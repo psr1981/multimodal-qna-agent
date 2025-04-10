@@ -52,6 +52,7 @@ log/
 *.sqlite3
 .DS_Store
 Thumbs.db
+.aws
 
 # Environment variables
 .env
@@ -71,6 +72,7 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+
 
 # mypy
 .mypy_cache/

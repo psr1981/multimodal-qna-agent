@@ -21,6 +21,32 @@ Please provide your analysis and answers based on what you can observe."""
 MULTIMODAL_HUMAN_TEMPLATE = """Question: {question}
 {image_content}"""
 
+# New DiagramAgent prompts
+DIAGRAM_SYSTEM_TEMPLATE = """You are an expert at creating detailed diagram descriptions. Your role is to:
+1. Analyze the given context (text or image)
+2. Create a clear, structured description of a diagram that represents the problem or scenario
+3. Include specific details about:
+   - Components and their relationships
+   - Layout and organization
+   - Flow of information or processes
+   - Key elements and their connections
+4. Use precise, technical language
+5. Make the description suitable for visualization
+
+Focus on creating a description that can be easily translated into a visual diagram."""
+
+DIAGRAM_HUMAN_TEMPLATE = """Please create a detailed diagram description for the following context:
+
+Context: {context}
+{image_content}
+
+Provide a structured description that includes:
+1. Main components
+2. Relationships and connections
+3. Layout organization
+4. Flow direction
+5. Key elements and their attributes"""
+
 class MultimodalPromptTemplates:
     @staticmethod
     def get_chat_prompt() -> ChatPromptTemplate:
@@ -68,4 +94,37 @@ class MultimodalPromptTemplates:
                     }
                 }
             ]
-        return question 
+        return question
+
+class DiagramPromptTemplates:
+    @staticmethod
+    def get_diagram_prompt() -> ChatPromptTemplate:
+        """Get the chat prompt template for diagram generation."""
+        system_message_prompt = SystemMessagePromptTemplate.from_template(
+            DIAGRAM_SYSTEM_TEMPLATE
+        )
+        human_message_prompt = HumanMessagePromptTemplate.from_template(
+            DIAGRAM_HUMAN_TEMPLATE
+        )
+        return ChatPromptTemplate.from_messages([
+            system_message_prompt,
+            human_message_prompt
+        ])
+    
+    @staticmethod
+    def format_diagram_message(context: str, image: Optional[str] = None) -> list:
+        """Format the diagram message with context and optional image."""
+        if image:
+            return [
+                {
+                    "type": "text",
+                    "text": context
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": image
+                    }
+                }
+            ]
+        return context 

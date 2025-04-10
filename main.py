@@ -10,14 +10,19 @@ from image_utils import process_image, validate_image_format
 # Load environment variables from .env file
 load_dotenv()
 
-# Get OpenAI API key from environment variables
+# Get API keys and AWS credentials
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    raise ValueError("OPENAI_API_KEY not found in environment variables")
+AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+AWS_REGION = os.getenv("AWS_REGION", "us-west-1")
+
+if not all([OPENAI_API_KEY, AWS_ACCESS_KEY, AWS_SECRET_KEY, AWS_SESSION_TOKEN]):
+    raise ValueError("Required API keys or AWS credentials not found in environment variables")
 
 app = FastAPI(
     title="Multimodal QnA Agent (Server)",
-    description="A FastAPI service that processes questions with optional images using OpenAI",
+    description="A FastAPI service that processes questions with optional images using OpenAI and AWS Bedrock",
     version="1.0.0"
 )
 
@@ -29,8 +34,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize graph with OpenAI API key
-graph = MultimodalQAGraph(api_key=OPENAI_API_KEY)
+# Initialize graph with OpenAI and AWS credentials
+graph = MultimodalQAGraph(
+    openai_api_key=OPENAI_API_KEY,
+    aws_access_key=AWS_ACCESS_KEY,
+    aws_secret_key=AWS_SECRET_KEY,
+    aws_session_token=AWS_SESSION_TOKEN,
+    aws_region=AWS_REGION
+)
 chain = graph.build()
 
 @app.post("/ask")
@@ -66,16 +77,18 @@ async def ask_question(
         else:
             image_data = None
 
-         # Run the chain
+        # Run the chain
         result = chain.invoke({
             "question": question,
             "image": image_data,
-            "chat_history": []
+            "answer": None,
+            "diagram_description": None
         })
 
         return JSONResponse({
             "status": "success",
-            "answer": result["answer"]
+            "answer": result["answer"],
+            "diagram_description": result["diagram_description"]
         })
 
     except HTTPException as he:
