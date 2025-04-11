@@ -67,8 +67,7 @@ class DiagramAgent:
             region_name=region
         )
 
-        print(self.bedrock_runtime)
-        
+       
         # Initialize BedrockChat for Claude 3
         self.model = BedrockChat(
             model_id="anthropic.claude-3-5-sonnet-20240620-v1:0",
@@ -101,7 +100,20 @@ class DiagramAgent:
 
             # Invoke the chat model
             response = self.model.invoke(messages)
-            return response.content.strip()
+
+            # get the content of the response
+            content = response.content.strip()
+            print("diagram content", content[0:100])
+
+            # Extract SVG content if present
+            if "<svg" in content and "</svg>" in content:
+                start_idx = content.find("<svg")
+                end_idx = content.find("</svg>") + 6
+                content = content[start_idx:end_idx]
+            else:
+                content = ""
+
+            return content
             
         except Exception as e:
             print(f"Bedrock Error: {str(e)}")

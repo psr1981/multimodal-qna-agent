@@ -54,8 +54,8 @@ class MultimodalQAGraph:
                 answer = qa_future.result()
                 diagram = diagram_future.result()
             
-                print("answer", answer)
-                print("diagram", diagram)
+                #print("answer", answer)
+                #print("diagram", diagram)
 
             # Update state with results
             state["answer"] = answer
