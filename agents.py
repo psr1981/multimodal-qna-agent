@@ -70,11 +70,13 @@ class DiagramAgent:
        
         # Initialize BedrockChat for Claude 3
         self.model = BedrockChat(
-            model_id="anthropic.claude-3-5-sonnet-20240620-v1:0",
+            model_id="anthropic.claude-3-5-sonnet-20241022-v2:0",
+            #model_id="anthropic.claude-3-5-sonnet-20240620-v1:0",
+            #model_id="us.anthropic.claude-3-7-sonnet-20250219-v1:0",
             client=self.bedrock_runtime,
             model_kwargs={
                 "max_tokens": 2000,
-                "temperature": 0.7
+                "temperature": 0.6
             }
         )
         self.prompt_templates = DiagramPromptTemplates()
