@@ -17,6 +17,8 @@ AWS_SECRET_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
 AWS_REGION = os.getenv("AWS_REGION", "us-west-1")
 
+print (AWS_ACCESS_KEY, AWS_SECRET_KEY, AWS_REGION)
+
 if not all([OPENAI_API_KEY, AWS_ACCESS_KEY, AWS_SECRET_KEY, AWS_SESSION_TOKEN]):
     raise ValueError("Required API keys or AWS credentials not found in environment variables")
 
@@ -84,6 +86,10 @@ async def ask_question(
             "answer": None,
             "diagram": None
         })
+
+        # override the diagram with the SVG file content
+        #with open('3d-svg-source.svg', 'r') as svg_file:
+        #    result["diagram"] = svg_file.read()
 
         return JSONResponse({
             "status": "success",

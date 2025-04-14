@@ -22,8 +22,11 @@ Finally, if you're unsure about something in the image, be honest about your unc
 """
 
 # Human prompt template for image analysis
-MULTIMODAL_HUMAN_TEMPLATE = """Question: {question}
-{image_content}"""
+MULTIMODAL_HUMAN_TEMPLATE = """
+Question: {question}
+{image_content}
+
+"""
 
 # New DiagramAgent prompts
 DIAGRAM_SYSTEM_TEMPLATE = """You are an expert at generating 3d diagram to visualize problems. 
@@ -36,14 +39,16 @@ Your role is to:
     c. Your 3d diagram can also contain charts and graphs if you think it is necessary to explain the problem.
 3. If you are not able to generate a 3d diagram then just say nothing, return empty string.
 4. Your response must not contain any other text other than generated svg code.
+5. your response should be in svg format 
 
 """
 
-DIAGRAM_HUMAN_TEMPLATE = """Please generate a 3d diagram to visualize the problem explined in following context:
+DIAGRAM_HUMAN_TEMPLATE = """
+
+Please generate a 3d diagram to visualize the problem explined in following context:
 
 Context: {context}
 {image_content}
-
 
 """
 

@@ -58,6 +58,8 @@ class DiagramAgent:
             region (str): AWS region
             session_token (str, optional): AWS session token
         """
+        #print (aws_access_key, region)
+        
         # Initialize AWS Bedrock client
         self.bedrock_runtime = boto3.client(
             service_name='bedrock-runtime',
@@ -70,9 +72,9 @@ class DiagramAgent:
        
         # Initialize BedrockChat for Claude 3
         self.model = BedrockChat(
-            model_id="anthropic.claude-3-5-sonnet-20241022-v2:0",
-            #model_id="anthropic.claude-3-5-sonnet-20240620-v1:0",
-            #model_id="us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+            #model_id="anthropic.claude-3-5-sonnet-20241022-v2:0",
+            model_id="anthropic.claude-3-5-sonnet-20240620-v1:0",
+            #model_id="anthropic.claude-3-7-sonnet-20250219-v1:0",
             client=self.bedrock_runtime,
             model_kwargs={
                 "max_tokens": 2000,
