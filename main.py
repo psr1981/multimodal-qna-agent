@@ -84,7 +84,8 @@ async def ask_question(
             "question": question,
             "image": image_data,
             "answer": None,
-            "diagram": None
+            "diagram": None,
+            "subject": None
         })
 
         # override the diagram with the SVG file content
@@ -94,7 +95,8 @@ async def ask_question(
         return JSONResponse({
             "status": "success",
             "answer": result["answer"],
-            "diagram": result["diagram"]
+            "diagram": result["diagram"],
+            "subject": result["subject"]
         })
 
     except HTTPException as he:

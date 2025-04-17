@@ -18,7 +18,6 @@ otherwise, follow these guidelines:
     4. Maintain a professional and helpful tone 
 
 Finally, if you're unsure about something in the image, be honest about your uncertainty
-
 """
 
 # Human prompt template for image analysis

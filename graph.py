@@ -1,14 +1,17 @@
 from langgraph.graph import StateGraph, END
-from typing import Dict, TypedDict, List, Any
-from agents import MultimodalAgent, DiagramAgent
+from typing import Dict, TypedDict, List, Any, Optional
+from agents import MultimodalAgent, DiagramAgent, QAResponse
 import asyncio
 import concurrent.futures
+from pydantic import BaseModel
 
+# Define the state type as a TypedDict instead of Pydantic model
 class GraphState(TypedDict):
     question: str
     image: str | None
     answer: str | None
     diagram: str | None
+    subject: str | None
 
 class MultimodalQAGraph:
     def __init__(self, openai_api_key: str, aws_access_key: str, aws_secret_key: str, 
@@ -51,27 +54,28 @@ class MultimodalQAGraph:
                 )
                 
                 # Get results (blocking)
-                answer = qa_future.result()
+                qa_response = qa_future.result()  # This is a dictionary
                 diagram = diagram_future.result()
             
-                #print("answer", answer)
-                #print("diagram", diagram)
-
-            # Update state with results
-            state["answer"] = answer
-            state["diagram"] = diagram
-            
-            return state
+            # Create a new state dictionary with the updates
+            return {
+                "question": state["question"],  # Preserve the original question
+                "image": state["image"],        # Preserve the original image
+                "answer": qa_response.get("answer", "No answer provided"),
+                "subject": qa_response.get("subject", "General"),
+                "diagram": diagram
+            }
             
         except Exception as e:
             print(f"Error in parallel processing: {str(e)}")
-            state["error"] = str(e)
-            # Still try to provide something useful if one agent fails
-            if not state.get("answer"):
-                state["answer"] = "Error processing question"
-            if not state.get("diagram"):
-                state["diagram"] = "Error generating diagram"
-            return state
+            # Return a complete state dictionary with error values
+            return {
+                "question": state["question"],  # Preserve the original question
+                "image": state["image"],        # Preserve the original image
+                "answer": "Error processing question",
+                "diagram": "Error generating diagram",
+                "subject": "General"
+            }
 
     def build(self) -> Any:
         """
